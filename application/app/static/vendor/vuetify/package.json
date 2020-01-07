@@ -1,0 +1,198 @@
+{
+  "_args": [
+    [
+      "vuetify",
+      "/home/gabriel/flaskUBU/application"
+    ]
+  ],
+  "_from": "vuetify@latest",
+  "_hasShrinkwrap": false,
+  "_id": "vuetify@2.1.10",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/vuetify",
+  "_nodeVersion": "12.13.0",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/vuetify_2.1.10_1573583469613_0.15208340898818085"
+  },
+  "_npmUser": {
+    "email": "john.j.leider@gmail.com",
+    "name": "johnjleider"
+  },
+  "_npmVersion": "lerna/3.16.2/node@v12.13.0+x64 (linux)",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "vuetify",
+    "raw": "vuetify",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/vuetify/-/vuetify-2.1.10.tgz",
+  "_shasum": "ff2107bf1a5f227b18dbe31e08d92753ad68a15b",
+  "_shrinkwrap": null,
+  "_spec": "vuetify",
+  "_where": "/home/gabriel/flaskUBU/application",
+  "author": {
+    "email": "john@vuetifyjs.com",
+    "name": "John Leider"
+  },
+  "bugs": {
+    "url": "https://issues.vuetifyjs.com"
+  },
+  "dependencies": {},
+  "description": "Vue Material Component Framework",
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@mdi/font": "^4.5.95",
+    "@mdi/js": "^3.8.95",
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.6.8",
+    "@vue/test-utils": "^1.0.0-beta.29",
+    "autoprefixer": "^9.6.1",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-detective": "^2.0.0",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "babel-plugin-transform-define": "^1.3.1",
+    "babel-polyfill": "^6.26.0",
+    "concurrently": "^4.1.1",
+    "cross-env": "^5.2.0",
+    "css-loader": "^3.1.0",
+    "cssnano": "^4.1.10",
+    "dotenv": "^8.0.0",
+    "eslint": "^6.1.0",
+    "eslint-loader": "^2.2.1",
+    "eslint-plugin-jest": "^22.13.6",
+    "fibers": "^4.0.1",
+    "file-loader": "^4.1.0",
+    "fork-ts-checker-webpack-plugin": "^1.4.3",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "happypack": "^5.0.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jest-canvas-mock": "^2.1.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-loader": "^3.0.0",
+    "pug": "^2.0.4",
+    "pug-loader": "^2.4.0",
+    "rimraf": "^2.6.3",
+    "sass": "^1.22.7",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "ts-loader": "^6.0.4",
+    "tslint": "^5.18.0",
+    "url-loader": "^2.1.0",
+    "vue-meta": "^2.0.5",
+    "vue-router": "^3.0.7",
+    "vuetify-loader": "^1.2.2",
+    "webpack-dev-server": "^3.7.2"
+  },
+  "directories": {},
+  "dist": {
+    "fileCount": 2204,
+    "integrity": "sha512-hFc6XNYc2YE3HisxCH5VezRFtGQ2RwTvBy7eN+b67UuiGIhvEUR9h3uO4NUuulmvKPKJ4rONN+L9sVszgMBlJQ==",
+    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJdyvpuCRA9TVsSAnZWagAAt1EP/j9wiRFpiMXOOILbVqY2\nE9lNQvhYIyYWXX+DNh2IU/LF71fnJVjzEB193qbsy0efQ8BujBoPAVqpqs5Y\nFkB4kzx+8tjfk6wFPK6SXE8AvCl+eI5w689PP8INiZqgIbETiRcXjwdM5Qpq\nzlA6OxIShpt5bZAR5hp/keUXQcnKsYIjlEmw/GX0y6CnFbWnOymSv92yPJLh\neaBtmXnRxa9njPwX6Quc9BxmpLR0kb96f5h3WGTchuNeVOkjrHSq2zmwlgp+\ngXPmhU0zCb1II3N8nANxMxQO9GLECfLbMApACo96Jem5EKW0JsMeyhwYC/e7\nrecMtXMpeoHNrNfgczJlYtSNUNPyRWCG7YY869Tn/EBaWRKXLRkKkQHO1ZmZ\nSlAb0kh7yZ4m2kisTFPIN73y6oxQEIHoJxx8e5NvrXEDzcxazjOOZdcM8pSa\nH5iUa+f4M49I+8TWnZGzT30NSfKtFyCzSe/auuFMKaPnM5Qbe3HyXhzLaw7i\nLjeJNprCBmIr0a/38Tz8HliF3fGo8xs3yGFILMXNvmsza+C9bIAIB0Sl6kD5\nXDuHbxHc1KOBXy1Hpg7CrcmRWtTiEOxQu3fNKRuuTrxxwfPok6Tz4Pmph0Z/\nCQ2C7OAtf/vpRf/zwDaMMNzShgINuRZ0LkhZyxRjiJmP6aI3HZHMi1kleETT\njgY3\r\n=45Lw\r\n-----END PGP SIGNATURE-----\r\n",
+    "shasum": "ff2107bf1a5f227b18dbe31e08d92753ad68a15b",
+    "tarball": "https://registry.npmjs.org/vuetify/-/vuetify-2.1.10.tgz",
+    "unpackedSize": 14714389
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/johnleider"
+  },
+  "gitHead": "dfc555ff4b45671ff18bb798e0f3b9a9ca95ad39",
+  "homepage": "https://vuetifyjs.com",
+  "jsdelivr": "dist/vuetify.js",
+  "keywords": [
+    "component framework",
+    "component library",
+    "material components",
+    "ui framework",
+    "ui library",
+    "vue framework",
+    "vuetify"
+  ],
+  "license": "MIT",
+  "main": "dist/vuetify.js",
+  "maintainers": [
+    {
+      "name": "amajesticpotatoe",
+      "email": "AMajesticPotatoe@gmail.com"
+    },
+    {
+      "name": "bdeo",
+      "email": "bdeo@udel.edu"
+    },
+    {
+      "name": "jacekkarczmarczyk",
+      "email": "jacek@karczmarczyk.pl"
+    },
+    {
+      "name": "johnjleider",
+      "email": "john.j.leider@gmail.com"
+    },
+    {
+      "name": "kaelwd",
+      "email": "kaelwd@gmail.com"
+    },
+    {
+      "name": "nekosaur",
+      "email": "albert@kaaman.nu"
+    }
+  ],
+  "module": "dist/vuetify.js",
+  "name": "vuetify",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "vue": "^2.6.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "directory": "packages/vuetify",
+    "type": "git",
+    "url": "git+https://github.com/vuetifyjs/vuetify.git"
+  },
+  "scripts": {
+    "build": "concurrently \"yarn build:dist --no-progress\" \"yarn build:lib\" -n \"dist,lib\" --kill-others-on-fail -r && yarn build:json",
+    "build:dist": "rimraf dist && cross-env NODE_ENV=production webpack --config build/config.js --progress --hide-modules",
+    "build:json": "node build/build-json.js",
+    "build:lib": "node build/build-lib.js",
+    "debug:test": "cross-env NODE_ENV=test node --inspect --inspect-brk ../../node_modules/jest/bin/jest.js --no-cache -i --verbose",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --config build/webpack.dev.config.js --hot",
+    "lint": "concurrently -n \\\"tsc,tslint,eslint,types\\\" --kill-others-on-fail \\\"tsc --noEmit --pretty\\\" \\\"tslint -p  src/**/*.ts -t verbose\\\" \\\"eslint --ext .js,.ts src -f codeframe --max-warnings 0\\\" \\\"yarn test:types\\\"",
+    "lint:fix": "concurrently -n \\\"tsc,tslint,eslint,types\\\" \\\"tsc --noEmit --pretty\\\" \\\"tslint --fix -p  src/**/*.ts -t verbose\\\" \\\"eslint --fix --ext .js,.ts src\\\" \\\"yarn test:types\\\"",
+    "test": "node build/run-tests.js",
+    "test:coverage": "yarn test --coverage",
+    "test:types": "tsc -p ./types/test/tsconfig.json",
+    "test:unix": "cross-env NODE_ENV=test jest",
+    "test:win32": "cross-env NODE_ENV=test jest -i",
+    "tsc": "tsc",
+    "watch": "cross-env TARGET=development webpack --config build/config.js --progress --hide-modules --watch"
+  },
+  "sideEffects": [
+    "*.css",
+    "*.sass",
+    "*.scss"
+  ],
+  "types": "types/index.d.ts",
+  "unpkg": "dist/vuetify.js",
+  "version": "2.1.10",
+  "vetur": {
+    "attributes": "dist/json/attributes.json",
+    "tags": "dist/json/tags.json"
+  },
+  "web-types": "dist/json/web-types.json"
+}

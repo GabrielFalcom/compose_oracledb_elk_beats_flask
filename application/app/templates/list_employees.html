@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+
+{% block title %}Employees{% endblock %}
+
+{% block container %}
+
+    <v-app id="app">
+        <template>
+            <v-data-table
+                    :headers="headers"
+                    :items="employees"
+                    class="elevation-1"
+            >
+                <template v-slot:top>
+                    <v-toolbar flat color="white">
+                        <v-toolbar-title>Employees</v-toolbar-title>
+                        <v-divider
+                                class="mx-4"
+                                inset
+                                vertical
+                        ></v-divider>
+                        <v-spacer></v-spacer>
+                        <v-dialog v-model="dialog" max-width="500px">
+                            <template v-slot:activator="{ on }">
+                                <v-btn color="primary" dark class="mb-2" v-on="on">NOVO EMPLOYEE</v-btn>
+                            </template>
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headline">{{ ' {{ formTitle }} '}}</span>
+                                </v-card-title>
+
+                                <v-card-text>
+                                    <v-container>
+                                        <v-row>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <v-select
+                                                    :items="employees"
+                                                    label="Job Id"
+                                                    v-model="editedItem.job_id"
+                                                    item-text="job_id"
+                                                    item-value="job_id"
+                                                    dense
+                                                ></v-select>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.first_name" label="First Name"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.last_name" label="Last Name"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.phone_number" label="Phone #"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.hire_date" label="Hire Date" :disabled="editedItem.employee_id != 0"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.salary" label="Salary ($)"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.commission_pct" label="Commision (%)"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="12" md="12">
+                                                <v-select
+                                                    :items="departments"
+                                                    label="Department ID"
+                                                    v-model="editedItem.department_id"
+                                                    item-text="department_name"
+                                                    item-value="department_id"
+                                                    dense
+                                                ></v-select>
+                                            </v-col>
+
+
+                                            <v-alert
+                                                    v-if="responseAction != ''"
+                                                    border="left"
+                                                    color="red lighten-2"
+                                                    dark
+                                                    style="width: 100%">
+                                                {{ '{{ responseAction }} ' }}
+                                            </v-alert>
+
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                                    <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </v-toolbar>
+                </template>
+                <template v-slot:item.action="{ item }">
+                    <v-icon
+                            small
+                            class="mr-2"
+                            @click="editItem(item)"
+                    >
+                        edit
+                    </v-icon>
+                    <v-icon
+                            small
+                            @click="deleteItem(item)"
+                    >
+                        delete
+                    </v-icon>
+                </template>
+            </v-data-table>
+        </template>
+    </v-app>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify({
+                icons: {
+                    iconfont: 'mdi', // default - only for display purposes
+                },
+            }),
+            data: () => ({
+                dialog: false,
+                headers: [
+                    { text: 'Employee ID', value: 'employee_id' },
+                    { text: 'First Name', value: 'first_name' },
+                    { text: 'Last Name', value: 'last_name' },
+                    { text: 'Phone #', value: 'phone_number' },
+                    { text: 'Hire Date', value: 'hire_date' },
+                    { text: 'Salary ($)', value: 'salary' },
+                    { text: 'Job ID', value: 'job_id' },
+                    { text: 'Commission (%)', value: 'commission_pct' },
+                    { text: 'AÇÕES', value: 'action', sortable: false },
+                ],
+                employees: [],
+                departments: [],
+                editedIndex: -1,
+                editedItem: {
+                    employee_id: 0,
+                    first_name: '',
+                    last_name: '',
+                    phone_number: '',
+                    hire_date: '',
+                    salary: 0,
+                    job_id: '',
+                    commission_pct: 0,
+                    department_id: 0,
+                    email:''
+
+                },
+                defaultItem: {
+                    employee_id: 0,
+                    first_name: '',
+                    last_name: '',
+                    phone_number: '',
+                    hire_date: '',
+                    salary: 0,
+                    job_id: '',
+                    commission_pct: 0,
+                    department_id: 0,
+                    email:''
+                },
+                responseAction: '',
+            }),
+
+            computed: {
+                formTitle () {
+                    return this.editedIndex === -1 ? 'Novo Employee' : 'Editar Employee'
+                },
+            },
+
+            watch: {
+                dialog (val) {
+                    val || this.close()
+                },
+            },
+
+            created () {
+                this.getEmployee()
+                this.getDepartments()
+
+            },
+
+            methods: {
+                editItem (item) {
+                    this.editedIndex = this.employees.indexOf(item)
+                    this.editedItem = Object.assign({}, item)
+                    this.dialog = true
+                },
+
+                deleteItem (item) {
+                    confirm('Confirma a exclusão desse item?') && this.deleteEmployee(item.employee_id)
+                },
+
+                close () {
+                    this.getEmployee();
+                    this.dialog = false
+                    setTimeout(() => {
+                        this.editedItem = Object.assign({}, this.defaultItem)
+                        this.editedIndex = -1
+                    }, 300)
+                },
+
+                save () {
+                    if (this.editedIndex > -1) {
+                        Object.assign(this.employees[this.editedIndex], this.editedItem)
+                        this.updateEmployee(this.editedItem)
+                    } else {
+                        this.addEmployee(this.editedItem)
+                    }
+                },
+
+                getEmployee() {
+                    const path = 'http://localhost:8000/api/employees';
+                    axios.get(path)
+                        .then((res) => {
+                            this.employees = res.data;
+                            {#console.log(this.employees);#}
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                getDepartments() {
+                    const path = 'http://localhost:8000/api/departments';
+                    axios.get(path)
+                        .then((res) => {
+                            this.departments = res.data;
+                            {#console.log(this.employees);#}
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                addEmployee(payload) {
+                    const path = 'http://localhost:8000/api/employees';
+                    axios.post(path, payload)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                            this.responseAction = error.response.data.message;
+                            setTimeout(() => {
+                                this.responseAction = '';
+                            }, 2000);
+                        });
+                },
+
+                updateEmployee(payload) {
+                    const path = 'http://localhost:8000/api/employees';
+                    axios.put(path, payload)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                            this.responseAction = error.response.data.message;
+                            setTimeout(() => {
+                                this.responseAction = '';
+                            }, 2000);
+                        });
+                },
+
+                deleteEmployee(id) {
+                    const path = 'http://localhost:8000/api/employees/'+id;
+                    axios.delete(path)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                        });
+                },
+            },
+        });
+    </script>
+
+{% endblock %}

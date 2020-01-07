@@ -1,0 +1,5 @@
+metricbeat.modules:
+  - module: system
+    period: 30s
+    metricsets: ["filesystem"]
+    filesystem.ignore_types: [nfs, smbfs, autofs]

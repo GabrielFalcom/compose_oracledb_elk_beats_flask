@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}JobHistory{% endblock %}
+
+{% block container %}
+
+    <v-app id="app">
+        <template>
+            <v-data-table
+                    :headers="headers"
+                    :items="jobHistory"
+                    class="elevation-1"
+            >
+                <template v-slot:top>
+                    <v-toolbar flat color="white">
+                        <v-toolbar-title>Jobs History</v-toolbar-title>
+                        <v-divider
+                                class="mx-4"
+                                inset
+                                vertical
+                        ></v-divider>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+                </template>
+                <template v-slot:item.action="{ item }">
+                    <v-icon
+                            small
+                            @click="deleteItem(item)"
+                    >
+                        delete
+                    </v-icon>
+                </template>
+            </v-data-table>
+        </template>
+    </v-app>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify({
+                icons: {
+                    iconfont: 'mdi', // default - only for display purposes
+                },
+            }),
+            data: () => ({
+                dialog: false,
+                headers: [
+                    { text: 'Employee ID', value: 'employee_id' },
+                    { text: 'Start Date', value: 'start_date' },
+                    { text: 'End Date', value: 'end_date' },
+                    { text: 'Job ID', value: 'job_id' },
+                    { text: 'Department ID', value: 'department_id' },
+                    { text: 'AÇÕES', value: 'action', sortable: false },
+                ],
+                jobHistory: [],
+                editedIndex: -1,
+                editedItem: {
+                    employee_id: 0,
+                    start_date: '',
+                    end_date: '',
+                    job_id: '',
+                    department_id: 0
+                },
+                defaultItem: {
+                    employee_id: 0,
+                    start_date: '',
+                    end_date: '',
+                    job_id: '',
+                    department_id: 0
+                },
+                responseAction: '',
+            }),
+
+            watch: {
+                dialog (val) {
+                    val || this.close()
+                },
+            },
+
+            created () {
+                this.getJobHistory()
+            },
+
+            methods: {
+                deleteItem (item) {
+                    confirm('Confirma a exclusão desse item?') && this.deleteJobHistory(item.employee_id)
+                },
+
+                close () {
+                    this.getJobHistory();
+                },
+
+                getJobHistory() {
+                    const path = 'http://localhost:8000/api/jobshistory';
+                    axios.get(path)
+                        .then((res) => {
+                            this.jobHistory = res.data;
+                            console.log(this.jobHistory);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                deleteJobHistory(id) {
+                    const path = 'http://localhost:8000/api/jobshistory/'+id;
+                    axios.delete(path)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                        });
+                },
+            },
+        });
+    </script>
+
+{% endblock %}

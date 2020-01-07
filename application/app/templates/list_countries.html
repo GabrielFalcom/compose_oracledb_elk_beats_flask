@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}Countries{% endblock %}
+
+{% block container %}
+
+    <v-app id="app">
+        <template>
+            <v-data-table
+                    :headers="headers"
+                    :items="countries"
+                    class="elevation-1"
+            >
+                <template v-slot:top>
+                    <v-toolbar flat color="white">
+                        <v-toolbar-title>Countries</v-toolbar-title>
+                        <v-divider
+                                class="mx-4"
+                                inset
+                                vertical
+                        ></v-divider>
+                        <v-spacer></v-spacer>
+                        <v-dialog v-model="dialog" max-width="500px">
+                            <template v-slot:activator="{ on }">
+                                <v-btn color="primary" dark class="mb-2" v-on="on">NOVO COUNTRY</v-btn>
+                            </template>
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headline">{{ ' {{ formTitle }} '}}</span>
+                                </v-card-title>
+
+                                <v-card-text>
+                                    <v-container>
+                                        <v-row>
+                                            <v-col cols="12" sm="3" md="3">
+                                                <v-text-field v-model="editedItem.country_id" label="Country ID" :disabled="disabled"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.country_name" label="Country Name"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="3" md="3">
+                                                <v-text-field v-model="editedItem.region_id" label="Region ID"></v-text-field>
+                                            </v-col>
+
+                                            <v-alert
+                                                    v-if="responseAction != ''"
+                                                    border="left"
+                                                    color="red lighten-2"
+                                                    dark
+                                                    style="width: 100%">
+                                                {{ '{{ responseAction }} ' }}
+                                            </v-alert>
+
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                                    <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </v-toolbar>
+                </template>
+                <template v-slot:item.action="{ item }">
+                    <v-icon
+                            small
+                            class="mr-2"
+                            @click="editItem(item)"
+                    >
+                        edit
+                    </v-icon>
+                    <v-icon
+                            small
+                            @click="deleteItem(item)"
+                    >
+                        delete
+                    </v-icon>
+                </template>
+            </v-data-table>
+        </template>
+    </v-app>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify({
+                icons: {
+                    iconfont: 'mdi', // default - only for display purposes
+                },
+            }),
+            data: () => ({
+                dialog: false,
+                headers: [
+                    { text: 'Country ID', value: 'country_id' },
+                    { text: 'Country Name', value: 'country_name' },
+                    { text: 'Region ID', value: 'region_id' },
+                    { text: 'AÇÕES', value: 'action', sortable: false },
+                ],
+                countries: [],
+                editedIndex: -1,
+                editedItem: {
+                    country_id: '',
+                    country_name: '',
+                    region_id: 0
+                },
+                defaultItem: {
+                    country_id: '',
+                    department_name: '',
+                    region_id: 0
+                },
+                responseAction: '',
+            }),
+
+            computed: {
+                formTitle () {
+                    return this.editedIndex === -1 ? 'Novo Country' : 'Editar Country'
+                },
+
+                disabled () {
+                    return this.editedIndex === -1 ? false : true
+                }
+            },
+
+            watch: {
+                dialog (val) {
+                    val || this.close()
+                },
+            },
+
+            created () {
+                this.getCountry()
+            },
+
+            methods: {
+                editItem (item) {
+                    this.editedIndex = this.countries.indexOf(item)
+                    this.editedItem = Object.assign({}, item)
+                    this.dialog = true
+                },
+
+                save () {
+                    if (this.editedIndex > -1) {
+                        Object.assign(this.countries[this.editedIndex], this.editedItem)
+                        this.updateCountry(this.editedItem)
+                    } else {
+                        this.addCountry(this.editedItem)
+                    }
+                },
+
+                deleteItem (item) {
+                    confirm('Confirma a exclusão desse item?') && this.deleteCountry(item.country_id)
+                },
+
+                close () {
+                    this.getCountry()
+                    this.dialog = false
+                    setTimeout(() => {
+                        this.editedItem = Object.assign({}, this.defaultItem)
+                        this.editedIndex = -1
+                    }, 300)
+                },
+
+                getCountry() {
+                    const path = 'http://localhost:8000/api/countries';
+                    axios.get(path)
+                        .then((res) => {
+                            this.countries = res.data;
+                            console.log(this.countries);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                addCountry(payload) {
+                    const path = 'http://localhost:8000/api/countries';
+                    axios.post(path, payload)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                            this.responseAction = error.response.data.message;
+                            setTimeout(() => {
+                                this.responseAction = '';
+                            }, 2000);
+                        });
+                },
+
+                updateCountry(payload) {
+                    const path = 'http://localhost:8000/api/countries';
+                    axios.put(path, payload)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                            this.responseAction = error.response.data.message;
+                            setTimeout(() => {
+                                this.responseAction = '';
+                            }, 2000);
+                        });
+                },
+
+                deleteCountry(id) {
+                    const path = 'http://localhost:8000/api/countries/'+id;
+                    axios.delete(path)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                        });
+                },
+            },
+        });
+    </script>
+
+{% endblock %}

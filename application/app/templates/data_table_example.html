@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}Pesquisa{% endblock %}
+
+{% block container %}
+
+    <v-app id="app">
+        <template>
+            <v-data-table
+                    :headers="headers"
+                    :items="fuzzy"
+                    class="elevation-1"
+            >
+                <template v-slot:top>
+                    <v-expansion-panels>
+                        <v-expansion-panel>
+                            <v-expansion-panel-header>Filtrar</v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                    <v-row style="margin: 5px 0 ">
+                        <v-col cols="12" sm="3" md="3">
+                            <v-select
+                                :items="countries"
+                                label="Country"
+                                v-model="filter.country_id"
+                                item-text="country_name"
+                                item-value="country_id"
+                                @input="clear($event)"
+                                v-on:change="getFuzzy(), getDepartments()"
+                                solo
+                            ></v-select>
+                        </v-col>
+
+                        <v-icon small class="mr-2" v-if="filter.country_id!=null" @click="filter.country_id=null, getFuzzy()">delete</v-icon>
+
+                        <v-col cols="12" sm="3" md="3">
+                            <v-select
+                                :items="departments"
+                                label="Department"
+                                v-model="filter.department_id"
+                                item-text="department_name"
+                                item-value="department_id"
+                                v-on:change="getFuzzy(), getLocations()"
+                                clearable
+                                solo
+                            ></v-select>
+                        </v-col>
+
+                        <v-icon small class="mr-2" v-if="filter.department_id!=null" @click="filter.department_id=null, getFuzzy()">delete</v-icon>
+
+                        <v-col cols="12" sm="3" md="3">
+                            <v-select
+                                :items="locations"
+                                label="City"
+                                v-model="filter.city"
+                                item-text="city"
+                                item-value="city"
+                                v-on:change="getFuzzy()"
+                                solo
+                            ></v-select>
+                        </v-col>
+
+                        <v-icon small class="mr-2" v-if="filter.city!=null" @click="filter.city=null, getFuzzy()">delete</v-icon>
+                    </v-row>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                    </v-expansion-panels>
+
+                    <v-toolbar flat color="white">
+                        <v-toolbar-title>Pesquisa</v-toolbar-title>
+                        <v-divider
+                                class="mx-4"
+                                inset
+                                vertical
+                        ></v-divider>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+                </template>
+
+            </v-data-table>
+        </template>
+    </v-app>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify({
+                icons: {
+                    iconfont: 'mdi', // default - only for display purposes
+                },
+            }),
+            data: () => ({
+                dialog: false,
+                headers: [
+                    { text: 'Country', value: 'country_name' },
+                    { text: 'Department', value: 'department_name' },
+                    { text: 'City', value: 'city' },
+                    { text: 'Employee', value: 'first_name' }
+                ],
+                fuzzy: [],
+                countries: [],
+                departments: [],
+                locations: [],
+                employees: [],
+                filter: {
+                    employee_id: null,
+                    city: null,
+                    department_id: null,
+                    country_id: null
+                },
+            }),
+
+            created () {
+                this.getFuzzy()
+                this.getCountries()
+                this.getDepartments()
+                this.getLocations()
+                this.getEmployees()
+            },
+
+            methods: {
+                getFuzzy() {
+                    let path = null
+
+                    let auxCo = this.filter.country_id
+
+                    if (auxCo != null){
+                        path = 'http://localhost:8000/api/fuzzy/'+auxCo;
+                        let auxDe = this.filter.department_id
+                        if (auxDe != null) {
+                            path = 'http://localhost:8000/api/fuzzy/'+auxCo+'/'+auxDe;
+                            let auxCi = this.filter.city
+                            if (auxCi != null) {
+                                path = 'http://localhost:8000/api/fuzzy/'+auxCo+'/'+auxDe+'/'+auxCi;
+                            }
+                        }
+                    } else {
+                     path = 'http://localhost:8000/api/fuzzy';
+                    }
+
+                    axios.get(path)
+                        .then((res) => {
+                            this.fuzzy = res.data;
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                getCountries() {
+                    const path = 'http://localhost:8000/api/countries';
+                    axios.get(path)
+                        .then((res) => {
+                            this.countries = res.data;
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                getDepartments() {
+                    path = 'http://localhost:8000/api/fuzzy/'+this.filter.country_id;
+                    axios.get(path)
+                        .then((res) => {
+                            this.departments = res.data;
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                getLocations() {
+                    path = 'http://localhost:8000/api/fuzzy/'+this.filter.country_id+'/'+this.filter.department_id;
+                    axios.get(path)
+                        .then((res) => {
+                            this.locations = res.data;
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                getEmployees() {
+                    const path = 'http://localhost:8000/api/employees';
+                    axios.get(path)
+                        .then((res) => {
+                            this.employees = res.data;
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                clear($item) {
+                    console.log($item)
+                    console.log("LOL")
+                }
+
+            },
+        });
+    </script>
+
+{% endblock %}

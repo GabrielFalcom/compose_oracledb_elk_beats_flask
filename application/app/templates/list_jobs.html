@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% block title %}Jobs{% endblock %}
+
+{% block container %}
+
+    <v-app id="app">
+        <template>
+            <v-data-table
+                    :headers="headers"
+                    :items="jobs"
+                    sort-by="calories"
+                    class="elevation-1"
+            >
+                <template v-slot:top>
+                    <v-toolbar flat color="white">
+                        <v-toolbar-title>Jobs</v-toolbar-title>
+                        <v-divider
+                                class="mx-4"
+                                inset
+                                vertical
+                        ></v-divider>
+                        <v-spacer></v-spacer>
+                        <v-dialog v-model="dialog" max-width="500px">
+                            <template v-slot:activator="{ on }">
+                                <v-btn color="primary" dark class="mb-2" v-on="on">NOVO JOB</v-btn>
+                            </template>
+                            <v-card>
+                                <v-card-title>
+                                    <span class="headline">{{ formTitle }}</span>
+                                </v-card-title>
+
+                                <v-card-text>
+                                    <v-container>
+                                        <v-row>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.job_id" label="Job ID" :disabled=disableId(editedItem)></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.job_title" label="Jod Title"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.min_salary" label="Min Salary ($)"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="6">
+                                                <v-text-field v-model="editedItem.max_salary" label="Max Salary ($)"></v-text-field>
+                                            </v-col>
+
+                                            <v-alert
+                                                    v-if="responseAction != ''"
+                                                    border="left"
+                                                    color="red lighten-2"
+                                                    dark
+                                                    style="width: 100%">
+                                                {{ '{{ responseAction }} ' }}
+                                            </v-alert>
+
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-card-text>
+
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                                    <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </v-toolbar>
+                </template>
+                <template v-slot:item.action="{ item }">
+                    <v-icon
+                            small
+                            class="mr-2"
+                            @click="editItem(item)"
+                    >
+                        edit
+                    </v-icon>
+                    <v-icon
+                            small
+                            @click="deleteItem(item)"
+                    >
+                        delete
+                    </v-icon>
+                </template>
+            </v-data-table>
+        </template>
+    </v-app>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify({
+                icons: {
+                    iconfont: 'mdi', // default - only for display purposes
+                },
+            }),
+            data: () => ({
+                dialog: false,
+                headers: [
+                    { text: 'ID', value: 'job_id' },
+                    { text: 'TITLE', value: 'job_title' },
+                    { text: 'MIN SALARY ($)', value: 'min_salary' },
+                    { text: 'MAX SALARY ($)', value: 'max_salary' },
+                    { text: 'AÇÕES', value: 'action', sortable: false },
+                ],
+                jobs: [],
+                editedIndex: -1,
+                editedItem: {
+                    job_id: '',
+                    job_title: '',
+                    max_salary: 0,
+                    min_salary: 0,
+                },
+                defaultItem: {
+                    job_id: '',
+                    job_title: '',
+                    max_salary: 0,
+                    min_salary: 0,
+                },
+                responseAction: '',
+            }),
+
+            computed: {
+                formTitle () {
+                    return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+                },
+            },
+
+            watch: {
+                dialog (val) {
+                    val || this.close()
+                },
+            },
+
+            created () {
+                this.getJobs()
+            },
+
+            methods: {
+                editItem (item) {
+                    this.editedIndex = this.jobs.indexOf(item)
+                    this.editedItem = Object.assign({}, item)
+                    this.dialog = true
+                },
+
+                deleteItem (item) {
+                    console.log(item)
+                    confirm('Confirma a exclusão desse item?') && this.deleteJob(item.job_id)
+                },
+
+                close () {
+                    this.getJobs();
+                    this.dialog = false
+                    setTimeout(() => {
+                        this.editedItem = Object.assign({}, this.defaultItem)
+                        this.editedIndex = -1
+                    }, 300)
+                },
+
+                save () {
+                    if (this.editedIndex > -1) {
+                        Object.assign(this.jobs[this.editedIndex], this.editedItem)
+                        this.updateJob(this.editedItem)
+                    } else {
+                        const payload = {
+                            job_id: this.editedItem.job_id,
+                            job_title: this.editedItem.job_title,
+                            min_salary: this.editedItem.min_salary,
+                            max_salary: this.editedItem.max_salary,
+                        };
+                        this.addJob(payload)
+                    }
+                },
+
+                disableId(item) {
+                    let result = null
+                    this.jobs.map((e)=> {
+                        if (e.job_id == item.job_id) {
+                            result = true
+                            return
+                        }
+                    })
+                    return result
+                },
+
+                getJobs() {
+                    const path = 'http://localhost:8000/api/jobs';
+                    axios.get(path)
+                        .then((res) => {
+                            this.jobs = res.data;
+                            console.log(this.jobs);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+
+                addJob(payload) {
+                    const path = 'http://localhost:8000/api/jobs';
+                    axios.post(path, payload)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                            this.responseAction = error.response.data.message;
+                            setTimeout(() => {
+                                this.responseAction = '';
+                            }, 2000);
+                        });
+                },
+
+                updateJob(payload) {
+                    const path = 'http://localhost:8000/api/jobs';
+                    axios.put(path, payload)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                            this.responseAction = error.response.data.message;
+                            setTimeout(() => {
+                                this.responseAction = '';
+                            }, 2000);
+                        });
+                },
+
+                deleteJob(id) {
+                    const path = 'http://localhost:8000/api/jobs/'+id;
+                    axios.delete(path)
+                        .then(() => {
+                            this.close();
+                        })
+                        .catch((error) => {
+                            console.log(error.response);
+                        });
+                },
+            },
+        });
+    </script>
+
+{% endblock %}

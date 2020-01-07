@@ -1,0 +1,23 @@
+version: "3"
+
+services: 
+  flask:
+    build:
+      context: ..
+    command: compose/develop
+    hostname: "flask"
+    environment:
+      PYTHONPATH: .
+    ports:
+      - '9200:9200' # elastic
+      - '5601:5601' # kibana
+      - '8000:8000' # flask
+      - '9000:9000' # supervisor
+  db:
+    image: epiclabs/docker-oracle-xe-11g
+    ports:
+      - 1521:1521
+    environment:
+      - ORACLE_ALLOW_REMOTE=true
+      - WEB_CONSOLE=false
+      - ORACLE_SID=xe
