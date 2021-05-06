@@ -10,4 +10,4 @@ python-json-logger==0.1.11
 python3-logstash==0.4.80
 SQLAlchemy==1.3.8
 Werkzeug==0.15.5
-Flask-Cors==3.0.7
+Flask-Cors==3.0.9
